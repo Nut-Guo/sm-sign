@@ -1,1 +1,0 @@
-/usr/bin/g++ -fPIC -g -shared  -o _mod_sm.so CMakeFiles/mod_sm.dir/CMakeFiles/mod_sm.dir/smPYTHON_wrap.cxx.o CMakeFiles/mod_sm.dir/utils/sm.cc.o CMakeFiles/mod_sm.dir/utils/key.cc.o  -Wl,-rpath,:::::::::::::: /usr/lib/libpython3.8.so ../lib/openssl/libcrypto.a ../lib/openssl/libssl.a 
