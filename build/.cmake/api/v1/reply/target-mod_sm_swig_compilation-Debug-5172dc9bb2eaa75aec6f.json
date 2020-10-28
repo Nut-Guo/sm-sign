@@ -1,0 +1,80 @@
+{
+	"backtrace" : 2,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_custom_target",
+			"SWIG_ADD_LIBRARY"
+		],
+		"files" : 
+		[
+			"/usr/share/cmake-3.18/Modules/UseSWIG.cmake",
+			"CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 58,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 756,
+				"parent" : 1
+			}
+		]
+	},
+	"id" : "mod_sm_swig_compilation::@6890427a1f51a3e7e1df",
+	"name" : "mod_sm_swig_compilation",
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "",
+			"sourceIndexes" : 
+			[
+				0,
+				2
+			]
+		},
+		{
+			"name" : "CMake Rules",
+			"sourceIndexes" : 
+			[
+				1
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 2,
+			"isGenerated" : true,
+			"path" : "build/CMakeFiles/mod_sm_swig_compilation",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 0,
+			"isGenerated" : true,
+			"path" : "build/CMakeFiles/mod_sm_swig_compilation.rule",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 0,
+			"path" : "utils/sm.i",
+			"sourceGroupIndex" : 0
+		}
+	],
+	"type" : "UTILITY"
+}

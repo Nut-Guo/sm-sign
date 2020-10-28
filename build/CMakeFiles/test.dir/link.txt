@@ -1,0 +1,1 @@
+/usr/bin/g++ -g  -Wl,-rpath -Wl,/mnt/d/Documents/Chores/homework/NSS/main/lab/sslc/lib CMakeFiles/test.dir/tools/test.cc.o CMakeFiles/test.dir/utils/key.cc.o CMakeFiles/test.dir/utils/sm.cc.o -o test  -Wl,-rpath,/mnt/d/Documents/Chores/homework/NSS/main/lab/sslc/lib/openssl ../lib/openssl/libcrypto.so.1.1 ../lib/openssl/libssl.so.1.1 

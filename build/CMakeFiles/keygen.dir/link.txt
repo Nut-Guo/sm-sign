@@ -1,0 +1,1 @@
+/usr/bin/g++ -g  -Wl,-rpath -Wl,/mnt/d/Documents/Chores/homework/NSS/main/lab/sslc/lib CMakeFiles/keygen.dir/tools/keygen.cc.o CMakeFiles/keygen.dir/utils/key.cc.o CMakeFiles/keygen.dir/utils/sm.cc.o -o keygen  -Wl,-rpath,/mnt/d/Documents/Chores/homework/NSS/main/lab/sslc/lib/openssl ../lib/openssl/libcrypto.so.1.1 ../lib/openssl/libssl.so.1.1 
