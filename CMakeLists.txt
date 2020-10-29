@@ -31,18 +31,18 @@ include_directories(inc)
 # endforeach( testsourcefile ${UTILS_SOURCES} )
 
 
-# AUX_SOURCE_DIRECTORY(tools DIR_TOOLS)
-# SET(TOOL_PATH ${DIR_TOOLS})
-# file( GLOB TOOLS_SOURCES tools/*.cc )
-# # MESSAGE(STATUS "${TOOLS_SOURCES}")
-# foreach( testsourcefile ${TOOLS_SOURCES} )
-#     get_filename_component( testname ${testsourcefile} NAME_WE)
-#     MESSAGE(STATUS ${testname})
-#     add_executable( ${testname} ${testsourcefile} ${UTILS_PATH})
-#     # Make sure YourLib is linked to each app
-#     target_link_libraries(${testname} ${LIB_PATH}/openssl/libcrypto.so.1.1)
-#     target_link_libraries(${testname} ${LIB_PATH}/openssl/libssl.so.1.1)
-# endforeach( testsourcefile ${TOOLS_SOURCES} )
+AUX_SOURCE_DIRECTORY(tools DIR_TOOLS)
+SET(TOOL_PATH ${DIR_TOOLS})
+file( GLOB TOOLS_SOURCES tools/*.cc )
+# MESSAGE(STATUS "${TOOLS_SOURCES}")
+foreach( testsourcefile ${TOOLS_SOURCES} )
+    get_filename_component( testname ${testsourcefile} NAME_WE)
+    MESSAGE(STATUS ${testname})
+    add_executable( ${testname} ${testsourcefile} ${UTILS_PATH})
+    # Make sure YourLib is linked to each app
+    target_link_libraries(${testname} ${LIB_PATH}/openssl/libcrypto.so.1.1)
+    target_link_libraries(${testname} ${LIB_PATH}/openssl/libssl.so.1.1)
+endforeach( testsourcefile ${TOOLS_SOURCES} )
 
 FIND_PACKAGE(SWIG REQUIRED)
 INCLUDE(${SWIG_USE_FILE})
@@ -83,13 +83,17 @@ SET_TARGET_PROPERTIES(mod_sm PROPERTIES INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/li
 SET_TARGET_PROPERTIES(mod_sm PROPERTIES CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 SET(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
 # INSTALL(TARGETS ${PROJECT_NAME} DESTINATION lib)
-INSTALL(TARGETS mod_sm DESTINATION lib/python3.8/site-packages)
+INSTALL(TARGETS mod_sm DESTINATION sm_sign)
 # INSTALL(FILES lib/openssl/libcrypto.so.1.1 DESTINATION lib)
 # INSTALL(FILES lib/openssl/libssl.so.1.1 DESTINATION lib)
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/sm.py DESTINATION lib/python3.8/site-packages)
-INSTALL(FILES src/sm.ipynb DESTINATION lib/python3.8/site-packages)
-
-
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/sm.py DESTINATION sm_sign)
+# INSTALL(FILES src/sm.ipynb DESTINATION sm_sign)
+INSTALL(FILES src/sign.py DESTINATION sm_sign)
+INSTALL(FILES src/parse.py DESTINATION sm_sign)
+INSTALL(FILES src/__init__.py DESTINATION sm_sign)
+INSTALL(FILES src/__main__.py DESTINATION sm_sign)
+INSTALL(FILES src/setup.py DESTINATION ${CMAKE_INSTALL_PREFIX})
+INSTALL(FILES README.md DESTINATION ${CMAKE_INSTALL_PREFIX})
 # siwg_link_library(
 #     keygen
 #     /mnt/d/Documents/Chores/homework/NSS/main/local/gmssl/lib/libcrypto.so.1.1

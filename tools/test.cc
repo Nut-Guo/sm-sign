@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <openssl/sm2.h>
+#include <fstream>
 #include "key.h"
 #include "sm.h"
 // #include "test.h"
@@ -99,10 +100,71 @@
 //     EVP_PKEY *priv_res = read_pkcs8(PRI_PKCS8);
 // }
 
-int main(int argc, char *argv[]) {
-    // generate_SM2_key_files(PUBLIC_SM2_KEY_FILE, PRIVATE_SM2_KEY_FILE, "12345678");
+bool pkcs7_verify_file(string p7s, string data)
+{
+    BIO *p7p = BIO_new(BIO_s_file());
+    BIO_write(p7p, (void *)p7s.c_str(), p7s.size());
+    PKCS7 *p7 = NULL;
+    ERR_load_PKCS7_strings();
+    if (p7p == NULL)
+    {
+        BIO_printf(p7p, "load error!\n");
+    }
+    // const unsigned char *pcs = (unsigned char *)p7s.c_str();
+    // unsigned char* pcs = new unsigned char[p7s.size()];
+    // memcpy(pcs, p7s.c_str(), p7s.size());
+    /* cout << p7s; */
+    p7 = d2i_PKCS7(&p7, (const unsigned char **)&p7s[0], (int)p7s.size());
+    if (p7 == NULL)
+    {
+        printf("PKCS7 Wrong\n");
+        return false;
+    }
+    cout << "Success!\n"
+         << endl;
+    BIO *bdata = BIO_new(BIO_s_mem());
+    BIO *out = BIO_new(BIO_s_mem());
+    //
+    BIO_write(bdata, (void *)data.c_str(), data.size());
+    // printf("%s", out);
+    int flags = PKCS7_NOVERIFY;
+    bool ret = PKCS7_verify(p7, NULL, NULL, bdata, out, flags);
+    // bool ret = true;
+    BIO_free_all(bdata);
+    BIO_free_all(out);
+    BIO_free_all(p7p);
+    return ret;
+}
+int main(int argc, char *argv[])
+{
+    OpenSSL_add_all_algorithms();
+    OpenSSL_add_all_digests();
+    EVP_add_digest(EVP_sm3());
+    generate_SM2_key_files(PUB_KEY_FILE, PRI_KEY_FILE, PASSWD);
     // test_evp_sm2_signature_verify();
     // test_evp_sm2_encrypt_decrypt();
     // test_sign_cert(argv[1], argv[2], argv[3], argv[4], argv[5]);
     // test_pkcs8();
+    EVP_PKEY *priv_key = read_private_key(PRI_KEY_FILE, PASSWD);
+    EVP_PKEY *pub_key = read_public_key(PUB_KEY_FILE);
+    X509 *x509 = generate_x509(priv_key, pub_key, "test.x509");
+    string test_data = "Hello1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111 2\0 qwer";
+    ifstream inf("/mnt/d/Documents/Chores/homework/NSS/main/lab/sslc/README.md");
+    inf >> test_data;
+    cout << test_data;
+    inf.close();
+    string pkcs7 = pkcs7_sign(x509, priv_key, test_data);
+    // cout << pkcs7 << endl;
+    // ofstream p("test.pk7");
+    // p << pkcs7;
+    // p.close();
+    // cout << "OK";
+    if (pkcs7_verify(pkcs7, test_data))
+    {
+        printf("Verify success!\n");
+    }
+    else
+    {
+        printf("Verify failed!\n");
+    }
 }

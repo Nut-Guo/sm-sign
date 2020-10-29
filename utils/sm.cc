@@ -5,9 +5,9 @@ string SM3(string data)
     string ret;
     char *dgst = (char *)malloc(32 * sizeof(unsigned char));
     sm3((unsigned char *)data.c_str(), data.size(), (unsigned char *)dgst);
-    for (int i = 0; i < 32; i++)
-        printf("%02hhx", dgst[i]);
-    printf("\n");
+    // for (int i = 0; i < 32; i++)
+    //     printf("%02hhx", dgst[i]);
+    // printf("\n");
     FILE *fp = fopen("/tmp/sm", "wb+");
     fwrite(dgst, sizeof(char), 32, fp);
     fclose(fp);
@@ -15,7 +15,7 @@ string SM3(string data)
     // for (int i = 0; i < 32; i++)
     // 	printf("%2x", dgst[i]);
     // cout <<data<<endl;
-    printf("\n");
+    // printf("\n");
     return ret;
 }
 
@@ -172,35 +172,96 @@ bool SM2_VERIFY(string data, string sign, EVP_PKEY *pubkey)
     return (bool)SM2_verify(NID_undef, (unsigned char *)data.c_str(), data.size(), (unsigned char *)sign.c_str(), sign.size(), pub_eckey);
 }
 
-string pkcs7_sign(X509* x509, EVP_PKEY * privkey, string cert_sf)
+string pkcs7_sign(X509 *x509, EVP_PKEY *privkey, string cert_sf)
 {
     // BIO *bp = BIO_new(BIO_s_file());
     // X509 *x509 = NULL;
     // EVP_PKEY *privkey = read_private_key(priv_pem.c_str(), passwd.c_str());
-    // // EC_KEY *priv_eckey = NULL;
-    // // priv_eckey = EVP_PKEY_get1_EC_KEY(privkey);
+    // EC_KEY *priv_eckey = NULL;
+    // priv_eckey = EVP_PKEY_get1_EC_KEY(privkey);
     // /*read public key from pem file.*/
     // BIO_read_filename(bp, x509_pem.c_str());
-    BIO *data = BIO_new(BIO_s_mem());
+    // BIO *data = BIO_new(BIO_s_mem());
     // BIO_read_filename(data, cert_sf.c_str());
     // x509 = PEM_read_bio_X509(bp, NULL, NULL, NULL);
-    BIO_read(data, (void *)cert_sf.c_str(), cert_sf.size());
-    int flags;
+    // BIO_write(data, (void *)cert_sf.c_str(), cert_sf.size());
+    BIO *data = BIO_new_mem_buf(cert_sf.c_str(), cert_sf.size());
+    int flags = 0;
     // flags |= PKCS7_DETACHED;
     // flags |=
     PKCS7 *p7 = PKCS7_sign(x509, privkey, NULL, data, flags);
     // BIO *cert_sm2 = BIO_new_file(cert_sm2_file.c_str(), "wb+");
-    
-    unsigned char buffer[1024];
+
+    unsigned char buffer[4096];
     unsigned char *p = buffer;
     int len = i2d_PKCS7(p7, &p);
-    if (len <= 0) {
+    if (len <= 0)
+    {
         printf("sign failed\n");
     }
-    string p7_out((char*)buffer, len);
-    return p7_out;
+    else
+    {
+        // printf("Sign ok.\n");
+    }
+    string p7_out((char *)buffer, len);
+    
     // PEM_write_bio_PKCS7(cert_sm2, p7);
     // BIO_free_all(cert_sm2);
     // BIO_free_all(bp);
-    // BIO_free_all(data);
+    // ofstream p("test.pk7");
+    // p << p7_out;
+    BIO_free_all(data);
+    // cout<<p7_out<<endl;
+    return p7_out;
+}
+
+bool pkcs7_verify(string p7s, string data)
+{
+    ofstream p("test.pk7");
+    p << p7s;
+    BIO *p7p = BIO_new_mem_buf(p7s.c_str(), p7s.size());
+    // BIO *p7p = BIO_new(BIO_s_mem());
+    // BIO_write(p7p, (void *)p7s.c_str(), p7s.size());
+    PKCS7 *p7 = NULL;
+    ERR_load_PKCS7_strings();
+    if (p7p == NULL)
+    {
+        BIO_printf(p7p, "load error!\n");
+    }
+    // const unsigned char *pcs = (unsigned char *)p7s.c_str();
+    // unsigned char* pcs = new unsigned char[p7s.size()];
+    // memcpy(pcs, p7s.c_str(), p7s.size());
+    /* cout << p7s; */
+    BIO *dp = BIO_new_mem_buf(data.c_str(), data.size());
+    // const unsigned char *ps = (const unsigned char *)&p7s[0];
+    p7 = d2i_PKCS7_bio(p7p, &p7);
+    if (p7 == NULL)
+    {
+        printf("PKCS7 Wrong\n");
+        return false;
+    } else {
+        // printf("PKCS7 OK\n");
+    }
+    BIO *bdata = BIO_new(BIO_s_mem());
+    BIO *out = BIO_new(BIO_s_mem());
+    //
+    BIO_write(bdata, (void *)&data[0], data.size());
+    // printf("%s", out);
+    // BIO_printf(bdata, )
+    int flags = PKCS7_NOVERIFY | PKCS7_NOCHAIN;
+    // bool ret = PKCS7_verify(p7, NULL, NULL, bdata, out, flags);
+    bool ret = PKCS7_verify(p7, NULL, NULL, bdata, out, flags);
+    // bool ret = true;
+    // cout <<endl;
+    BIO_free_all(bdata);
+    BIO_free_all(out);
+    BIO_free_all(p7p);
+    BIO_free_all(dp);
+    return ret;
+}
+
+void init()
+{
+    OpenSSL_add_all_algorithms();
+    OpenSSL_add_all_digests();
 }

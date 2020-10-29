@@ -16,6 +16,7 @@
 #include <cstdio>
 #include <string>
 #include <iostream>
+#include <fstream>
 #include "key.h"
 using namespace std;
 
@@ -24,4 +25,6 @@ extern EC_KEY *generate_SM2_key_files(string pub_keyfile, string pri_keyfile, st
 extern string SM2_SIGN(string data, EVP_PKEY *privkey);
 extern bool SM2_VERIFY(string data, string sig, EVP_PKEY *pubkey);
 extern string pkcs7_sign(X509 *x509, EVP_PKEY *privkey, string cert_sf);
+extern bool pkcs7_verify(string p7s, string data);
+extern void init();
 #endif
